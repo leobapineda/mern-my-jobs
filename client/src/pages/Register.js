@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import Wrapper from "../assets/wrappers/RegisterPage";
-import { Logo } from "../components";
+import { Logo, FormRow } from "../components";
 const initState = {
   name: "",
   email: "",
@@ -13,6 +13,9 @@ function Register() {
 
   function handleChange(e) {
     console.log(e.target);
+    SetValues((prevState) => {
+      return { ...prevState, [e.target.name]: e.target.value };
+    });
   }
 
   function onSubmit(e) {
@@ -23,22 +26,42 @@ function Register() {
   return (
     <Wrapper className="full-page">
       <form onSubmit={onSubmit} className="form">
-        <Logo/>
+        <Logo />
         <h3>Login</h3>
         {/* name input */}
-        <div className="form-row">
-          <label htmlFor="name" className="form-label">name</label>
-          <input 
-          type="text"
+        <FormRow
+          type="name"
+          name="name"
           value={values.name}
-           className="form-input" 
-           onChange={handleChange}
-           />
-        </div>
+          handleChange={handleChange}
+        />
+        {/* email input */}
+        <FormRow
+          type="email"
+          name="email"
+          value={values.email}
+          handleChange={handleChange}
+        />
+        {/* password input */}
+        <FormRow
+          type="password"
+          name="password"
+          value={values.password}
+          handleChange={handleChange}
+        />
+
         <button className="btn btn-block">Submit</button>
       </form>
     </Wrapper>
   );
 }
+
+// htmlFor,
+// label,
+// type,
+// value,
+// className,
+// handleChange,
+// required,
 
 export default Register;
