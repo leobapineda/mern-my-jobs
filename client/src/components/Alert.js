@@ -1,11 +1,8 @@
-import React from 'react'
+import React from "react";
 
-function Alert() {
-  return (
-    <div>
-      
-    </div>
-  )
+function Alert({ text, type }) {
+  console.log("Alert component");
+  return <div className={`alert alert-${type}`}>{text}</div>;
 }
 
-export default Alert
+export default Alert;
