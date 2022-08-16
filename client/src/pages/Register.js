@@ -1,25 +1,26 @@
 import React, { useState, useRef, useEffect } from "react";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { Logo, FormRow, Alert } from "../components";
-import { useGlobalContext } from "../context";
+import { useGlobalContext } from "../hooks/useGlobalContext";
 const initState = {
   name: "",
   email: "",
   password: "",
   isMember: true,
-  showAlert : false
 };
 
 function Register() {
   // --->>> STATES
-  const { show, setShow, hideAlert } = useGlobalContext();
   const [values, SetValues] = useState(initState);
-  const [alertState, setAlertState] = useState({ text: "", type:""});
+
   // --->>> STATES
 
-  // --->>> INPUTS FUNCTIONS
+  // --->>> GLOBAL CONTEXT
+  const { showAlert, isLoading, displayAlert } = useGlobalContext();
+  // --->>> GLOBAL CONTEXT
+
+  // --->>> HANDLE INPUTS FUNCTIONS
   function handleChange(e) {
-    console.log(e.target);
     SetValues((prevState) => {
       return { ...prevState, [e.target.name]: e.target.value };
     });
@@ -27,34 +28,50 @@ function Register() {
 
   function onSubmit(e) {
     e.preventDefault();
-    if (values.name === "" || values.email === "" || values.password === "") {
-      setShow(true);
-      setAlertState({ text: "filled all inputs", type: "danger" });
-      hideAlert()
+    if (showAlert) return;
+    const { name, email, password, isMember } = values;
+    if (!email || !password || (!isMember && !name)) {
+      displayAlert();
+      // console.log("cant login/register");
       return;
     }
+    // console.log("all good, login/register");
+  }
+
+  function toggleMember(e) {
+    SetValues((prevState) => {
+      return { ...prevState, isMember: !prevState.isMember };
+    });
   }
   // --->>> INPUTS FUNCTIONS
-  console.log("Register");
+
+  // --->>> USE-EFFECT
+
+  // --->>> USE-EFFECT
+  console.log("register");
   return (
     <Wrapper className="full-page">
-      <form onSubmit={onSubmit} className="form">
+      <form onSubmit={(e) => onSubmit(e)} className="form">
         <Logo />
-        <h3>Login</h3>
+        <h3>{values.isMember ? "Login" : "Register"}</h3>
         {/* name input */}
-        {show && <Alert {...alertState} />}
-        <FormRow
-          type="name"
-          name="name"
-          value={values.name}
-          handleChange={handleChange}
-        />
+        {showAlert && <Alert />}
+        {!values.isMember && (
+          <FormRow
+            type="name"
+            name="name"
+            value={values.name}
+            handleChange={handleChange}
+          />
+        )}
         {/* email input */}
         <FormRow
+          focusElement={true}
           type="email"
           name="email"
           value={values.email}
           handleChange={handleChange}
+          isMember={values.isMember}
         />
         {/* password input */}
         <FormRow
@@ -64,10 +81,18 @@ function Register() {
           handleChange={handleChange}
         />
 
-        <button className="btn btn-block">Submit</button>
+        <button type="submit" className="btn btn-block">
+          Submit
+        </button>
+        <p>
+          {values.isMember ? "Not a member yet?" : " Already a member?"}
+          <button type="button" className="member-btn" onClick={toggleMember}>
+            {values.isMember ? "Register" : "Login"}
+          </button>
+        </p>
       </form>
     </Wrapper>
   );
 }
-
+// values.isMember
 export default Register;
