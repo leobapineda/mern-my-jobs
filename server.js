@@ -1,4 +1,7 @@
 import dotenv from "dotenv";
+import "express-async-errors";
+// require("express-async-errors");
+
 dotenv.config();
 import express from "express";
 const app = express();
@@ -9,10 +12,13 @@ import authRouter from "./routes/authRoutes.js";
 import jobsRouter from "./routes/jobsRoutes.js";
 // MIDDLEWARE
 import NotFoundMiddleware from "./middleware/notFound.js";
+// import ErrorHanlderMiddleware from "./middleware/error-handler.js";
 import ErrorHanlderMiddleware from "./middleware/error-handler.js";
+
 app.use(express.json());
 
 app.get("/", (req, res) => {
+  // throw new Error(" i am server error")
   res.status(200).send("hi there");
 });
 

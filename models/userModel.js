@@ -1,3 +1,5 @@
+import validator from "validator";
+
 import mongoose from "mongoose";
 const { Schema } = mongoose;
 
@@ -5,28 +7,36 @@ const userSchema = new Schema({
   name: {
     type: String,
     required: [true, "Please provide name"],
-  },
-  lastName: {
-    type: String,
-    required: [true, "Please provide last name"],
+    minLength: 3,
+    maxLength: 20,
+    trim: true,
   },
   email: {
     type: String,
-    required: [true, "Please provide email"],
     unique: true,
-    match: [
-      /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
-      "Please provide valid email",
-    ],
+    validate: {
+      // validator: () => validator.isEmail(this.email),
+      validator: validator.isEmail,
+      message: "Please provide a valid email",
+    },
+    required: [true, "Please provide email"],
   },
   password: {
     type: String,
     required: [true, "Please provide password"],
-    // minLength: 6,
+    minLength: 6,
+  },
+  lastName: {
+    type: String,
+    maxLength: 20,
+    trim: true,
+    default: "last name",
   },
   location: {
     type: String,
-    required: [true, "Please provide location"],
+    trim: true,
+    maxLength: 20,
+    default: "my city",
   },
 });
 
