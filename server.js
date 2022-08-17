@@ -4,6 +4,9 @@ import express from "express";
 const app = express();
 import connectDB from "./db/connect.js";
 
+// ROUTERS
+import authRouter from "./routes/authRoutes.js";
+import jobsRouter from "./routes/jobsRoutes.js";
 // MIDDLEWARE
 import NotFoundMiddleware from "./middleware/notFound.js";
 import ErrorHanlderMiddleware from "./middleware/error-handler.js";
@@ -12,6 +15,10 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.status(200).send("hi there");
 });
+
+// ROUTES
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/jobs", jobsRouter);
 
 // USE MIDDLEWARE
 app.use(NotFoundMiddleware);
