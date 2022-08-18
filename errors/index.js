@@ -1,3 +1,5 @@
 import BadRequest from "./BadRequest.js";
 import Unauthorize from "./Unauthorized.js";
-export { BadRequest, Unauthorize };
+import NotFound from "./NotFound.js";
+import Forbidden from "./Forbidden.js";
+export { BadRequest, Unauthorize, NotFound, Forbidden };

@@ -1,25 +1,36 @@
-import {
-  ReasonPhrases,
-  StatusCodes,
-  getReasonPhrase,
-  getStatusCode,
-} from "http-status-codes";
-
+import { StatusCodes } from "http-status-codes";
+import bcrypt from "bcryptjs";
 import UserModel from "../models/userModel.js";
 
 // ERRORS
-import { BadRequest, Unauthorize } from "../errors/index.js";
+import {
+  BadRequest,
+  Unauthorize,
+  NotFound,
+  Forbidden,
+} from "../errors/index.js";
 const register = async (req, res) => {
   const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
     throw new BadRequest("Please provide all values");
   }
-  const user = await UserModel.create({ name, email, password });
+
+  const repitedEmail = await UserModel.findOne({ email });
+  if (repitedEmail) {
+    throw new BadRequest("Email already in use. Please try another one");
+  }
+
+  // HASH PASSWORD
+  const salt = await bcrypt.genSaltSync(10);
+  const hashPassword = await bcrypt.hashSync(password, salt);
+  // HASH PASSWORD
+
+  const user = await UserModel.create({ name, email, password: hashPassword });
   res.status(StatusCodes.CREATED).json({ user });
 };
 
-const login = (req, res) => {
+const login = async (req, res) => {
   res.status(200).send("login");
 };
 
