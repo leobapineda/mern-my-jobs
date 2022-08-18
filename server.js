@@ -17,9 +17,8 @@ import ErrorHanlderMiddleware from "./middleware/error-handler.js";
 import AuthorizationMiddleware from "./middleware/TokenAuthorization.js"
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  // throw new Error(" i am server error")
-  res.status(200).send("hi there");
+app.get("/api/v1", (req, res) => {
+  res.json({log: "message"});
 });
 
 // ROUTES
@@ -40,5 +39,4 @@ async function start() {
     console.log(error);
   }
 }
-
 start();

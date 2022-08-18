@@ -23,25 +23,35 @@ const register = async (req, res) => {
 
   const token = await user.createJWT();
 
-  res.status(StatusCodes.CREATED).json({ user, token });
+  res.status(StatusCodes.CREATED).json({
+    user: {
+      name: user.name,
+      email: user.email,
+      lastName: user.lastName,
+      location: user.location,
+    },
+
+    token,
+  });
 };
 
 const login = async (req, res) => {
   const { email, password } = req.body;
   const User = await UserModel.findOne({ email });
-
+  console.log(User);
   const isPassword = User.VerifyPassword(password);
-  if (!isPassword) {
-    throw new Unauthorize("Wrong password. Try again");
-  }
+  // if (!isPassword) {
+  //   throw new Unauthorize("Wrong password. Try again");
+  // }
 
-  res.status(200).json({ message: `welcome ${User.name}`, User });
+  res.status(200).json({ message: `welcome ${User.name} ${User.password}`, User });
 };
 
 const updateUser = (req, res) => {
   res.status(200).send("updateUser");
 };
 
+// HELPER FUNCTIONS
 const deleteAllUsers = async (req, res) => {
   const a = await UserModel.deleteMany();
   res.status(200).json({ deleted: a.deletedCount });

@@ -32,9 +32,10 @@ function Register() {
     const { name, email, password, isMember } = values;
     if (!email || !password || (!isMember && !name)) {
       displayAlert();
-      // console.log("cant login/register");
       return;
     }
+    console.log("register user");
+    registerUser("/api/v1/auth/register", { name, email, password });
     // console.log("all good, login/register");
   }
 
@@ -45,10 +46,27 @@ function Register() {
   }
   // --->>> INPUTS FUNCTIONS
 
+  // --->>> API CALLS
+
+// app.use("/api/v1/auth", authRouter);
+// app.use("/api/v1/jobs", AuthorizationMiddleware, jobsRouter);
+
+  async function registerUser(url, data) {
+    console.log(url);
+    console.log(data);
+      const reponse = await fetch(url, {
+        method: "POST",
+        body: data,
+      });
+      console.log(reponse);
+  }
+  
+  // --->>> API CALLS
+
   // --->>> USE-EFFECT
 
   // --->>> USE-EFFECT
-  console.log("register");
+  // console.log("register");
   return (
     <Wrapper className="full-page">
       <form onSubmit={(e) => onSubmit(e)} className="form">

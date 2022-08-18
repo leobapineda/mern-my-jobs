@@ -26,6 +26,7 @@ const userSchema = new Schema({
     type: String,
     required: [true, "Please provide password"],
     minLength: 6,
+    select: false,
   },
   lastName: {
     type: String,
@@ -55,9 +56,8 @@ userSchema.methods.VerifyPassword = async function (enteredPwd) {
 };
 
 userSchema.methods.createJWT = async function () {
-  const token = await jwt.sign({useId: this._id}, process.env.JWT_SECRET_KEY, {
-    expiresIn: "1h",
+  return jwt.sign({ useId: this._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: process.env.JWT_LIFETIME,
   });
-  return token;
 };
 export default mongoose.model("User", userSchema);

@@ -33,7 +33,6 @@ function GlobalContextProvider({ children }) {
   return (
     <AppContext.Provider value={{ ...state, displayAlert }}>
       {children}
-      <button>lol</button>
     </AppContext.Provider>
   );
 }
