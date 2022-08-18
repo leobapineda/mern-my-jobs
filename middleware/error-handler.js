@@ -11,7 +11,7 @@ const ErrorHanlderMiddleware = (err, req, res, next) => {
     message: err.message || "Oops, something went wrong, try again later",
   };
 
-  if ( err.code && err.code === 11000) {
+  if (err.code && err.code === 11000) {
     CustomObject.statusCode = StatusCodes.FORBIDDEN;
     CustomObject.message = "Can't use this email, please try another one";
   }
@@ -22,7 +22,7 @@ const ErrorHanlderMiddleware = (err, req, res, next) => {
       .map((error) => error.message)
       .join(". ");
   }
-  // console.log(err);
+  console.log(err);
   res.status(CustomObject.statusCode).json({ message: CustomObject.message });
   // res.status(CustomObject.statusCode).json({ err });
 };

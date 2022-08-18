@@ -1,7 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import bcrypt from "bcryptjs";
 import UserModel from "../models/userModel.js";
-
 // ERRORS
 import {
   BadRequest,
@@ -21,17 +19,23 @@ const register = async (req, res) => {
     throw new BadRequest("Email already in use. Please try another one");
   }
 
-  // HASH PASSWORD
-  const salt = await bcrypt.genSaltSync(10);
-  const hashPassword = await bcrypt.hashSync(password, salt);
-  // HASH PASSWORD
+  const user = await UserModel.create({ name, email, password });
 
-  const user = await UserModel.create({ name, email, password: hashPassword });
-  res.status(StatusCodes.CREATED).json({ user });
+  const token = await user.createJWT();
+
+  res.status(StatusCodes.CREATED).json({ user, token });
 };
 
 const login = async (req, res) => {
-  res.status(200).send("login");
+  const { email, password } = req.body;
+  const User = await UserModel.findOne({ email });
+
+  const isPassword = User.VerifyPassword(password);
+  if (!isPassword) {
+    throw new Unauthorize("Wrong password. Try again");
+  }
+
+  res.status(200).json({ message: `welcome ${User.name}`, User });
 };
 
 const updateUser = (req, res) => {

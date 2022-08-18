@@ -1,5 +1,7 @@
 const createJob = async (req, res) => {
-  res.status(200).send("createJob");
+  const {useId} = req.user
+    res.status(200).json({ success: "Authorization  successful ", useId });
+
 };
 
 const getAllJobs = async (req, res) => {

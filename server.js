@@ -14,7 +14,7 @@ import jobsRouter from "./routes/jobsRoutes.js";
 import NotFoundMiddleware from "./middleware/notFound.js";
 // import ErrorHanlderMiddleware from "./middleware/error-handler.js";
 import ErrorHanlderMiddleware from "./middleware/error-handler.js";
-
+import AuthorizationMiddleware from "./middleware/TokenAuthorization.js"
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -24,7 +24,7 @@ app.get("/", (req, res) => {
 
 // ROUTES
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/jobs", jobsRouter);
+app.use("/api/v1/jobs", AuthorizationMiddleware, jobsRouter);
 
 // USE MIDDLEWARE
 app.use(NotFoundMiddleware);
