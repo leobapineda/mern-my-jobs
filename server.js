@@ -1,7 +1,6 @@
 import dotenv from "dotenv";
 import "express-async-errors";
-// require("express-async-errors");
-
+import morgan from "morgan";
 dotenv.config();
 import express from "express";
 const app = express();
@@ -14,11 +13,15 @@ import jobsRouter from "./routes/jobsRoutes.js";
 import NotFoundMiddleware from "./middleware/notFound.js";
 // import ErrorHanlderMiddleware from "./middleware/error-handler.js";
 import ErrorHanlderMiddleware from "./middleware/error-handler.js";
-import AuthorizationMiddleware from "./middleware/TokenAuthorization.js"
+import AuthorizationMiddleware from "./middleware/TokenAuthorization.js";
 app.use(express.json());
 
+if (process.env.NODE_ENV !== "production") {
+  app.use(morgan("dev"));
+}
+
 app.get("/api/v1", (req, res) => {
-  res.json({log: "message"});
+  res.json({ log: "message" });
 });
 
 // ROUTES

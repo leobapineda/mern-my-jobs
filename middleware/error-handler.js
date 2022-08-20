@@ -22,12 +22,10 @@ const ErrorHanlderMiddleware = (err, req, res, next) => {
       .map((error) => error.message)
       .join(". ");
   }
-  console.log(err);
+
+ 
   res.status(CustomObject.statusCode).json({ message: CustomObject.message });
   // res.status(CustomObject.statusCode).json({ err });
 };
 
 export default ErrorHanlderMiddleware;
-
-// nada que ver
-// nada que ver el mismo lugar a la misma hora

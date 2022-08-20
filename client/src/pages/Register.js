@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router";
 import Wrapper from "../assets/wrappers/RegisterPage";
 import { Logo, FormRow, Alert } from "../components";
 import { useGlobalContext } from "../hooks/useGlobalContext";
@@ -11,12 +12,13 @@ const initState = {
 
 function Register() {
   // --->>> STATES
+  let navigate = useNavigate();
   const [values, SetValues] = useState(initState);
-
   // --->>> STATES
 
   // --->>> GLOBAL CONTEXT
-  const { showAlert, isLoading, displayAlert } = useGlobalContext();
+  const { showAlert, isLoading, displayAlert, registerUser, user, token } =
+    useGlobalContext();
   // --->>> GLOBAL CONTEXT
 
   // --->>> HANDLE INPUTS FUNCTIONS
@@ -26,7 +28,7 @@ function Register() {
     });
   }
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
     if (showAlert) return;
     const { name, email, password, isMember } = values;
@@ -34,9 +36,13 @@ function Register() {
       displayAlert();
       return;
     }
-    console.log("register user");
-    registerUser("/api/v1/auth/register", { name, email, password });
-    // console.log("all good, login/register");
+    // CHECK FOR LOGIN OR REGISTER
+    const currentUser = { name, email, password };
+    if (isMember) {
+      console.log("login user, login call");
+    } else {
+      registerUser(currentUser);
+    }
   }
 
   function toggleMember(e) {
@@ -46,27 +52,18 @@ function Register() {
   }
   // --->>> INPUTS FUNCTIONS
 
-  // --->>> API CALLS
-
-// app.use("/api/v1/auth", authRouter);
-// app.use("/api/v1/jobs", AuthorizationMiddleware, jobsRouter);
-
-  async function registerUser(url, data) {
-    console.log(url);
-    console.log(data);
-      const reponse = await fetch(url, {
-        method: "POST",
-        body: data,
-      });
-      console.log(reponse);
-  }
-  
-  // --->>> API CALLS
-
   // --->>> USE-EFFECT
-
+  useEffect(() => {
+    if (user && token) {
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+      return
+    }
+    else return
+  }, [user, navigate, token]);
   // --->>> USE-EFFECT
-  // console.log("register");
+// console.log("render register");
   return (
     <Wrapper className="full-page">
       <form onSubmit={(e) => onSubmit(e)} className="form">
@@ -99,7 +96,11 @@ function Register() {
           handleChange={handleChange}
         />
 
-        <button type="submit" className="btn btn-block">
+        <button
+          disabled={isLoading || showAlert}
+          type="submit"
+          className="btn btn-block"
+        >
           Submit
         </button>
         <p>

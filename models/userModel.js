@@ -9,7 +9,7 @@ const userSchema = new Schema({
   name: {
     type: String,
     required: [true, "Please provide name"],
-    minLength: 3,
+    minLength: [3, "Name must be at least 3 characters long"],
     maxLength: 20,
     trim: true,
   },
@@ -25,7 +25,7 @@ const userSchema = new Schema({
   password: {
     type: String,
     required: [true, "Please provide password"],
-    minLength: 6,
+    minLength: [6, "Password must be at least 6 characters long"],
     select: false,
   },
   lastName: {
@@ -51,8 +51,7 @@ userSchema.pre("save", async function () {
 
 // COMPARE PASSWORDS
 userSchema.methods.VerifyPassword = async function (enteredPwd) {
-  const isPassword = await bcrypt.hash(enteredPwd, this.password);
-  return isPassword;
+  return await bcrypt.compare(enteredPwd, this.password);
 };
 
 userSchema.methods.createJWT = async function () {

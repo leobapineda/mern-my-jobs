@@ -32,6 +32,3 @@ function FormRow({ type, name, value, handleChange, labelText, isMember }) {
 }
 
 export default FormRow;
-
-// debo poner mi ref en input
-// para ver si renderiza, debo ver si isMember es verdad o falso

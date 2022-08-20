@@ -30,21 +30,27 @@ const register = async (req, res) => {
       lastName: user.lastName,
       location: user.location,
     },
-
     token,
+    location: user.location,
   });
 };
 
 const login = async (req, res) => {
   const { email, password } = req.body;
-  const User = await UserModel.findOne({ email });
-  console.log(User);
-  const isPassword = User.VerifyPassword(password);
-  // if (!isPassword) {
-  //   throw new Unauthorize("Wrong password. Try again");
-  // }
+  if (!email || !password) throw new BadRequest("Please provide all values");
+  const User = await UserModel.findOne({ email }).select("+password");
+  if (!User) throw new Unauthorize("Email does not match any account");
+  const isPassword = await User.VerifyPassword(password);
+  if (!isPassword) {
+    throw new Unauthorize("The password is incorrect");
+  }
 
-  res.status(200).json({ message: `welcome ${User.name} ${User.password}`, User });
+  //  CUAL ES LA RESPUESTA
+  res.status(200).json({
+    message: `Welcome ${User.name}`,
+    email: User.email,
+    name: User.name,
+  });
 };
 
 const updateUser = (req, res) => {
