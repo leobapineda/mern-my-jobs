@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 
 import {
   BadRequest,
-  Unauthorize,
+  Unauthenticated,
   NotFound,
   Forbidden,
 } from "../errors/index.js";
@@ -10,7 +10,7 @@ import {
 const Authorization = async (req, res, next) => {
   const BearerToken = req.headers.authorization;
   if (!BearerToken || !BearerToken.startsWith("Bearer ")) {
-    throw new Unauthorize("No token present");
+    throw new Unauthenticated("No token present");
   }
   const token = BearerToken.split(" ")[1];
   const verifyJWT = await jwt.verify(token, process.env.JWT_SECRET_KEY);

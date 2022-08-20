@@ -3,7 +3,7 @@ import UserModel from "../models/userModel.js";
 // ERRORS
 import {
   BadRequest,
-  Unauthorize,
+  Unauthenticated,
   NotFound,
   Forbidden,
 } from "../errors/index.js";
@@ -38,18 +38,18 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) throw new BadRequest("Please provide all values");
-  const User = await UserModel.findOne({ email }).select("+password");
-  if (!User) throw new Unauthorize("Email does not match any account");
-  const isPassword = await User.VerifyPassword(password);
-  if (!isPassword) {
-    throw new Unauthorize("The password is incorrect");
+  const user = await UserModel.findOne({ email }).select("+password");
+  if (!user) throw new Unauthenticated("Email does not match any account");
+  const isPasswordCorrect = await user.VerifyPassword(password);
+  if (!isPasswordCorrect) {
+    throw new Unauthenticated("The password is incorrect");
   }
-
-  //  CUAL ES LA RESPUESTA
+  user.password = undefined;
+  const token = await user.createJWT();
   res.status(200).json({
-    message: `Welcome ${User.name}`,
-    email: User.email,
-    name: User.name,
+    user, 
+    location: user.location,
+    token,
   });
 };
 

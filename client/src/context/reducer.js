@@ -18,39 +18,56 @@ export default function reducer(initStateReducer, action) {
         alertType: "",
         isLoading: false,
       };
-    case ACTIONS.REGISTER_USER_BEGIN:
+    // case ACTIONS.REGISTER_USER_BEGIN:
+    //   return {
+    //     ...initStateReducer,
+    //     isLoading: true,
+    //   };
+    // case ACTIONS.REGISTER_USER_SUCCESS:
+    //   return {
+    //     ...initStateReducer,
+    //     isLoading: false,
+    //     showAlert: true,
+    //     alertText: `Welcome ${action.payload.user?.name}! Redirecting...`,
+    //     alertType: "success",
+    //     token: action.payload.token,
+    //     user: action.payload.user,
+    //     jobLocation: action.payload.location,
+    //     userLocation: action.payload.location,
+    //   };
+    // case ACTIONS.REGISTER_USER_ERROR:
+    //   return {
+    //     ...initStateReducer,
+    //     isLoading: false,
+    //     showAlert: true,
+    //     alertText: action.payload.message,
+    //     alertType: "danger",
+    //   };
+    // LOGINNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    case ACTIONS.SETUP_USER_BEGIN:
       return {
         ...initStateReducer,
         isLoading: true,
       };
-    case ACTIONS.REGISTER_USER_SUCCESS:
+    case ACTIONS.SETUP_USER_SUCCESS:
       return {
         ...initStateReducer,
         isLoading: false,
         showAlert: true,
-        alertText: `Welcome ${action.payload.user.name}! Redirecting...`,
+        alertText: action.payload.message,
         alertType: "success",
         token: action.payload.token,
         user: action.payload.user,
-        // location
         jobLocation: action.payload.location,
         userLocation: action.payload.location,
-        // location
       };
-    case ACTIONS.REGISTER_USER_ERROR:
+    case ACTIONS.SETUP_USER_ERROR:
       return {
         ...initStateReducer,
         showAlert: true,
-        alertText: action.payload.msg,
+        isLoading: false,
+        alertText: action.payload.message,
         alertType: "danger",
-      };
-    case "LOCAL":
-      return {
-        ...initState,
-        user: action.payload.user,
-        token: action.payload.token,
-        jobLocation: action.payload.location,
-        userLocation: action.payload.location,
       };
     default:
       throw new Error(`This action does not exist: ${action.type}`);

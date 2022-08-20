@@ -54,6 +54,7 @@ userSchema.methods.VerifyPassword = async function (enteredPwd) {
   return await bcrypt.compare(enteredPwd, this.password);
 };
 
+// CREATE JWT
 userSchema.methods.createJWT = async function () {
   return jwt.sign({ useId: this._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_LIFETIME,

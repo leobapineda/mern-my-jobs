@@ -17,7 +17,7 @@ function Register() {
   // --->>> STATES
 
   // --->>> GLOBAL CONTEXT
-  const { showAlert, isLoading, displayAlert, registerUser, user, token } =
+  const { showAlert, isLoading, displayAlert, user, token, setUpUser } =
     useGlobalContext();
   // --->>> GLOBAL CONTEXT
 
@@ -39,9 +39,17 @@ function Register() {
     // CHECK FOR LOGIN OR REGISTER
     const currentUser = { name, email, password };
     if (isMember) {
-      console.log("login user, login call");
+      setUpUser({
+        currentUser,
+        endPoint: "login",
+        alertMessage: "Welcome! Redirecting...",
+      });
     } else {
-      registerUser(currentUser);
+      setUpUser({
+        currentUser,
+        endPoint: "register",
+        alertMessage: "Registered! Redirecting...",
+      });
     }
   }
 
@@ -50,20 +58,19 @@ function Register() {
       return { ...prevState, isMember: !prevState.isMember };
     });
   }
-  // --->>> INPUTS FUNCTIONS
+  // --->>> HANDLE INPUTS FUNCTIONS
 
   // --->>> USE-EFFECT
   useEffect(() => {
     if (user && token) {
       setTimeout(() => {
         navigate("/");
-      }, 1000);
-      return
-    }
-    else return
+      }, 3000);
+      return;
+    } else return;
   }, [user, navigate, token]);
   // --->>> USE-EFFECT
-// console.log("render register");
+  // console.log("render register");
   return (
     <Wrapper className="full-page">
       <form onSubmit={(e) => onSubmit(e)} className="form">
