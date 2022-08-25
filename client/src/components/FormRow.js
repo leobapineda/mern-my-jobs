@@ -1,16 +1,17 @@
 import React, { useEffect, useRef } from "react";
 
-function FormRow({ type, name, value, handleChange, labelText, isMember }) {
+function FormRow({ type, name, value, handleChange, labelText, isMember, NotuseFocusComponent }) {
   const nameInput = useRef();
-
+  
   useEffect(() => {
-    if (name === "name") {
-      nameInput.current.focus();
-      return;
-    } else if (name === "email") {
-      nameInput.current.focus();
-      return;
-    }
+    if (NotuseFocusComponent) return; 
+      if (name === "name") {
+        nameInput.current.focus();
+        return;
+      } else if (name === "email") {
+        nameInput.current.focus();
+        return;
+      }
   }, [isMember]);
 
   return (
@@ -26,6 +27,7 @@ function FormRow({ type, name, value, handleChange, labelText, isMember }) {
         onChange={handleChange}
         id={name}
         name={name}
+        required = {true}
       />
     </div>
   );

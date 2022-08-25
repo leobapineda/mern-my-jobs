@@ -1,5 +1,4 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Landing, Error, Register, ProtectedRoutes } from "./pages";
 import {
   AddJob,
@@ -8,8 +7,8 @@ import {
   SharedLayout,
   Stats,
 } from "./pages/dashboard";
-function App() {
 
+function App() {
   return (
     <BrowserRouter>
       <Routes>

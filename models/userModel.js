@@ -21,30 +21,34 @@ const userSchema = new Schema({
       message: "Please provide a valid email",
     },
     required: [true, "Please provide email"],
+    trim: true,
   },
   password: {
     type: String,
     required: [true, "Please provide password"],
     minLength: [6, "Password must be at least 6 characters long"],
     select: false,
+    trim: true,
   },
   lastName: {
     type: String,
     maxLength: 20,
-    trim: true,
     default: "last name",
+    trim: true,
   },
   location: {
     type: String,
-    trim: true,
     maxLength: 20,
     default: "my city",
+    trim: true,
   },
 });
 
 // METHODS
 // HASH PASSWORD
 userSchema.pre("save", async function () {
+  // si no modifico password, no ejecutes esta logica
+  if(!this.isModified("password")) return
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 });
@@ -56,7 +60,7 @@ userSchema.methods.VerifyPassword = async function (enteredPwd) {
 
 // CREATE JWT
 userSchema.methods.createJWT = async function () {
-  return jwt.sign({ useId: this._id }, process.env.JWT_SECRET_KEY, {
+  return jwt.sign({ userId: this._id }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_LIFETIME,
   });
 };

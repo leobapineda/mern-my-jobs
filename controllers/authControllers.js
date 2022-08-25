@@ -47,24 +47,41 @@ const login = async (req, res) => {
   user.password = undefined;
   const token = await user.createJWT();
   res.status(200).json({
-    user, 
+    user,
     location: user.location,
     token,
   });
 };
 
-const updateUser = (req, res) => {
-  res.status(200).send("updateUser");
+const updateUser = async (req, res) => {
+  const { name, lastName, email, location } = req.body;
+  if (!name.trim() || !lastName.trim() || !email.trim() || !location.trim()) {
+    throw new BadRequest("Please provide all values ");
+  }
+  const user = await UserModel.findOne({ _id: req.user.userID });
+  
+  user.name = name;
+  user.email = email;
+  user.lastName = lastName;
+  user.location = location;
+
+  await user.save()
+
+  const token = await user.createJWT()
+ 
+  res.status(200).json({
+    user, token, location: user.location
+  });
 };
 
 // HELPER FUNCTIONS
 const deleteAllUsers = async (req, res) => {
-  const a = await UserModel.deleteMany();
-  res.status(200).json({ deleted: a.deletedCount });
+  const deleteAll = await UserModel.deleteMany()
+  res.status(200).json({ deleted: deleteAll.deletedCount });
 };
 
 const showUsers = async (req, res) => {
-  const Users = await UserModel.find();
+  const Users = await UserModel.find().select("+password");
   res.status(200).json({ No: Users.length, Users });
 };
 

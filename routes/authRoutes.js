@@ -7,10 +7,11 @@ import {
   deleteAllUsers,
   showUsers,
 } from "../controllers/authControllers.js";
-
+import authenticateUser from "../middleware/TokenAuth.js";
+ 
 router.route("/login").post(login);
 router.route("/register").post(register);
-router.route("/updateUser").patch(updateUser);
+router.route("/updateUser").patch(authenticateUser, updateUser);
 router.route("/").delete(deleteAllUsers).get(showUsers);
 ;
 export default router;

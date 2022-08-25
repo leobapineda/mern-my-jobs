@@ -22,8 +22,6 @@ const ErrorHanlderMiddleware = (err, req, res, next) => {
       .map((error) => error.message)
       .join(". ");
   }
-
- 
   res.status(CustomObject.statusCode).json({ message: CustomObject.message });
   // res.status(CustomObject.statusCode).json({ err });
 };

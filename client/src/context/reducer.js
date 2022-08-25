@@ -18,32 +18,6 @@ export default function reducer(initStateReducer, action) {
         alertType: "",
         isLoading: false,
       };
-    // case ACTIONS.REGISTER_USER_BEGIN:
-    //   return {
-    //     ...initStateReducer,
-    //     isLoading: true,
-    //   };
-    // case ACTIONS.REGISTER_USER_SUCCESS:
-    //   return {
-    //     ...initStateReducer,
-    //     isLoading: false,
-    //     showAlert: true,
-    //     alertText: `Welcome ${action.payload.user?.name}! Redirecting...`,
-    //     alertType: "success",
-    //     token: action.payload.token,
-    //     user: action.payload.user,
-    //     jobLocation: action.payload.location,
-    //     userLocation: action.payload.location,
-    //   };
-    // case ACTIONS.REGISTER_USER_ERROR:
-    //   return {
-    //     ...initStateReducer,
-    //     isLoading: false,
-    //     showAlert: true,
-    //     alertText: action.payload.message,
-    //     alertType: "danger",
-    //   };
-    // LOGINNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
     case ACTIONS.SETUP_USER_BEGIN:
       return {
         ...initStateReducer,
@@ -62,6 +36,45 @@ export default function reducer(initStateReducer, action) {
         userLocation: action.payload.location,
       };
     case ACTIONS.SETUP_USER_ERROR:
+      return {
+        ...initStateReducer,
+        showAlert: true,
+        isLoading: false,
+        alertText: action.payload.message,
+        alertType: "danger",
+      };
+    case ACTIONS.LOGOUT:
+      return {
+        ...initState,
+        user: null,
+        token: null,
+        jobLocation: null,
+        userLocation: null,
+      };
+    case ACTIONS.TOGGLE_SIDEBAR:
+      return {
+        ...initStateReducer,
+        showSidebar: !initStateReducer.showSidebar,
+      };
+
+    case ACTIONS.UPDATE_USER_BEGIN:
+     return {
+       ...initStateReducer,
+       isLoading: true,
+     };
+    case ACTIONS.UPDATE_USER_SUCCESS:
+      return {
+        ...initStateReducer,
+        user: action.payload.user,
+        token: action.payload.token,
+        jobLocation: action.payload.location,
+        userLocation: action.payload.location,
+        showAlert: true,
+        isLoading: false,
+        alertText: "Your profile has been updated!",
+        alertType: "success",
+      };
+    case ACTIONS.UPDATE_USER_ERROR:
       return {
         ...initStateReducer,
         showAlert: true,
