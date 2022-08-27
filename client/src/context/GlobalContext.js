@@ -15,9 +15,23 @@ export const initState = {
   alertType: "",
   user: user ? JSON.parse(user) : null,
   token: token,
-  jobLocation: location,
   userLocation: location,
   showSidebar: false,
+  jobLocation: location,
+  // JOB VALUES
+  isEditing: false,
+  editJobId: "",
+  position: "",
+  company: "",
+  jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
+  jobType: "full-time",
+  statusOptions: ["pending", "interview", "declined"],
+  status: "pending",
+  // GET ALL JOBS
+  jobs: [],
+  totalJobs: 0,
+  numOfPages: 1,
+  page: 1,
 };
 
 function GlobalContextProvider({ children }) {
@@ -45,15 +59,14 @@ function GlobalContextProvider({ children }) {
       return response;
     },
     (error) => {
-      console.log(error);
       if (error.response.status === 401) {
-        const {message} = error?.response?.data;
+        const { message } = error?.response?.data;
         dispatch({
           type: ACTIONS.UPDATE_USER_ERROR,
-          payload: { message: `${message}. Please login again.`},
+          payload: { message: `${message}. Please login again.` },
         });
         setTimeout(() => {
-          logoutUser()
+          logoutUser();
         }, 2000);
       }
       return Promise.reject(error);
@@ -120,7 +133,6 @@ function GlobalContextProvider({ children }) {
       });
       addUserToLocalStorage(user, token, location);
     } catch (error) {
-      console.log(error?.response?.data);
       if (error.response.status === 401) return;
       const message =
         error?.response?.data || "Oops, something went wrong, try again later";
@@ -130,6 +142,41 @@ function GlobalContextProvider({ children }) {
       });
     }
     clearAlert();
+  }
+  
+  async function createJob(currentJobInfo) {
+    dispatch({
+      type: ACTIONS.JOB_CREATED_BEGIN,
+    });
+    try {
+      await authFetch.post("/jobs", currentJobInfo);
+      dispatch({
+        type: ACTIONS.JOB_CREATED_SUCCESS,
+      });
+    } catch (error) {
+      if (error?.response?.status === 401) return;
+      const message =
+        error?.response?.data || "Oops, can not create job, try again later";
+      dispatch({
+        type: ACTIONS.JOB_CREATED_ERROR,
+        payload: message,
+      });
+    }
+    clearAlert();
+  }
+
+  async function getJobs() {
+    // llamada a mi api, y dispatch actions
+    dispatch({type: ACTIONS.GET_JOBS_BEGIN})
+    try {
+      const { data } = await authFetch("/jobs")
+      const {totalJobs, numOfPages, jobs} = data;
+      console.log(data);
+    dispatch({ type: ACTIONS.GET_JOBS_SUCCESS, payload : {totalJobs, numOfPages, jobs} });
+
+    } catch (error) {
+        console.log(error);
+    }
   }
   // --->>> DISPATCH ACTIONS
 
@@ -160,6 +207,8 @@ function GlobalContextProvider({ children }) {
         logoutUser,
         toogleSidebar,
         updateUser,
+        createJob,
+        getJobs,
       }}
     >
       {children}

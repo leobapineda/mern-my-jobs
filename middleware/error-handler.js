@@ -18,10 +18,12 @@ const ErrorHanlderMiddleware = (err, req, res, next) => {
 
   if (err.name === "ValidationError") {
     CustomObject.statusCode = StatusCodes.BAD_REQUEST;
-    CustomObject.message = Object.values(err.errors)
-      .map((error) => error.message)
+    CustomObject.message = Object.values(err?.errors)
+      .map((error) => error?.message)
       .join(". ");
   }
+
+  // console.log(err);
   res.status(CustomObject.statusCode).json({ message: CustomObject.message });
   // res.status(CustomObject.statusCode).json({ err });
 };
