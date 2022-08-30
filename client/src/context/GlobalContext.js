@@ -83,7 +83,7 @@ function GlobalContextProvider({ children }) {
   function clearAlert() {
     const t = setTimeout(() => {
       dispatch({ type: ACTIONS.HIDE_ALERT });
-    }, 3000);
+    }, 2000);
     return () => clearTimeout(t);
   }
 
@@ -143,7 +143,7 @@ function GlobalContextProvider({ children }) {
     }
     clearAlert();
   }
-  
+
   async function createJob(currentJobInfo) {
     dispatch({
       type: ACTIONS.JOB_CREATED_BEGIN,
@@ -166,18 +166,65 @@ function GlobalContextProvider({ children }) {
   }
 
   async function getJobs() {
+    // console.log("getJobs");
     // llamada a mi api, y dispatch actions
-    dispatch({type: ACTIONS.GET_JOBS_BEGIN})
+    dispatch({ type: ACTIONS.GET_JOBS_BEGIN });
     try {
-      const { data } = await authFetch("/jobs")
-      const {totalJobs, numOfPages, jobs} = data;
-      console.log(data);
-    dispatch({ type: ACTIONS.GET_JOBS_SUCCESS, payload : {totalJobs, numOfPages, jobs} });
-
+      const { data } = await authFetch("/jobs");
+      const { totalJobs, numOfPages, jobs } = data;
+      dispatch({
+        type: ACTIONS.GET_JOBS_SUCCESS,
+        payload: { totalJobs, numOfPages, jobs },
+      });
     } catch (error) {
-        console.log(error);
+      console.log(error);
+      logoutUser();
+    }
+
+    clearAlert();
+  }
+
+  async function deleteJob(id) {
+    try {
+      const res = await authFetch.delete(`/jobs/${id}`);
+      getJobs();
+      console.log(res);
+    } catch (error) {
+      console.log(error);
     }
   }
+
+  function setEditJob(id) {
+    const editJob = state.jobs.find((job) => {
+      return job._id === id;
+    });
+    // console.log(editJob);
+    dispatch({
+      type: ACTIONS.EDITING_JOB,
+      payload: editJob,
+    });
+  }
+
+  async function editJob(jobInfo) {
+    try {
+      const res = await authFetch.patch(`/jobs/${jobInfo.editJobId}`, jobInfo);
+      console.log(res);
+      dispatch({
+        type: ACTIONS.EDIT_JOB_SUCCESS,
+      });
+    } catch (error) {
+      if (error?.response?.status === 401) return;
+      const message =
+        error?.response?.data || "Oops, can not create job, try again later";
+      dispatch({
+        type: ACTIONS.EDIT_JOB_ERROR,
+        payload: message,
+      });
+    } 
+    clearAlert();
+    // ya se guardo todo, regresame a all jobs
+  }
+
   // --->>> DISPATCH ACTIONS
 
   // --->>> USEEFFECT
@@ -209,6 +256,10 @@ function GlobalContextProvider({ children }) {
         updateUser,
         createJob,
         getJobs,
+        clearAlert,
+        setEditJob,
+        deleteJob,
+        editJob,
       }}
     >
       {children}

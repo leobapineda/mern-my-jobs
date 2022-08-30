@@ -23,7 +23,11 @@ const ErrorHanlderMiddleware = (err, req, res, next) => {
       .join(". ");
   }
 
-  // console.log(err);
+  if (err.kind === "ObjectId") {
+     CustomObject.statusCode = StatusCodes.BAD_REQUEST;
+     CustomObject.message = "invalid id :" + err.value;
+  } 
+  
   res.status(CustomObject.statusCode).json({ message: CustomObject.message });
   // res.status(CustomObject.statusCode).json({ err });
 };

@@ -18,6 +18,36 @@ export default function reducer(initStateReducer, action) {
         alertText: "",
         alertType: "",
         isLoading: false,
+        jobLocation: initStateReducer.location,
+        isEditing: false,
+        editJobId: "",
+        position: "",
+        company: "",
+        jobType: "full-time",
+        status: "pending",
+
+        //   showAlert: false,
+        //   alertText: "",
+        //   alertType: "",
+        //   user: user ? JSON.parse(user) : null,
+        //   token: token,
+        //   userLocation: location,
+        //   showSidebar: false,
+        //   jobLocation: location,
+        //   // JOB VALUES
+        //   isEditing: false,
+        //   editJobId: "",
+        //   position: "",
+        //   company: "",
+        //   jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
+        //   jobType: "full-time",
+        //   statusOptions: ["pending", "interview", "declined"],
+        //   status: "pending",
+        //   // GET ALL JOBS
+        //   jobs: [],
+        //   totalJobs: 0,
+        //   numOfPages: 1,
+        //   page: 1,
       };
     case ACTIONS.SETUP_USER_BEGIN:
       return {
@@ -109,7 +139,8 @@ export default function reducer(initStateReducer, action) {
       return {
         ...initStateReducer,
         isLoading: true,
-        showAlert: false
+        // this is just a precaution
+        showAlert: false,
       };
     case ACTIONS.GET_JOBS_SUCCESS:
       return {
@@ -119,11 +150,70 @@ export default function reducer(initStateReducer, action) {
         totalJobs: action.payload.totalJobs,
         numOfPages: action.payload.numOfPages,
       };
-
+    case ACTIONS.GET_JOBS_ERROR:
+      return {
+        ...initStateReducer,
+        showAlert: true,
+        isLoading: false,
+        alertText: action.payload.message,
+        alertType: "danger",
+      };
+    case ACTIONS.EDITING_JOB:
+      return {
+        ...initStateReducer,
+        isEditing: true,
+        editJobId: action.payload._id,
+        position: action.payload.position,
+        company: action.payload.company,
+        jobType: action.payload.jobType,
+        status: action.payload.status,
+        jobLocation: action.payload.jobLocation,
+      };
+    //edit job success
+    case ACTIONS.EDIT_JOB_SUCCESS:
+      return {
+        ...initState,
+        showAlert: true,
+        isLoading: false,
+        alertText: "Job Updated",
+        alertType: "success",
+      };
+    case ACTIONS.EDIT_JOB_ERROR:
+      return {
+        ...initState,
+        showAlert: true,
+        isLoading: false,
+        alertText: action.payload.message,
+        alertType: "danger",
+      };
     default:
       throw new Error(`This action does not exist: ${action.type}`);
   }
 }
 
-// GET_JOBS_BEGIN: "GET_JOBS_BEGIN",
-//   GET_JOBS_SUCCESS: "GET_JOBS_SUCCESS",
+
+// const initState2 = {
+//   isLoading: false,
+//   showAlert: false,
+//   alertText: "",
+//   alertType: "",
+//   user: user ? JSON.parse(user) : null,
+//   token: token,
+//   userLocation: location,
+//   showSidebar: false,
+//   jobLocation: location,
+//   // JOB VALUES
+//   isEditing: false,
+//   editJobId: "",
+//   position: "",
+//   company: "",
+//   jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
+//   jobType: "full-time",
+//   statusOptions: ["pending", "interview", "declined"],
+//   status: "pending",
+//   // GET ALL JOBS
+//   jobs: [],
+//   totalJobs: 0,
+//   numOfPages: 1,
+//   page: 1,
+// };

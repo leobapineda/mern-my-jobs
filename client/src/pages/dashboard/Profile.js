@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, FormRow } from "../../components";
 import Wrapper from "../../assets/wrappers/DashboardFormPage";
 // import useG
 import { useGlobalContext } from "../../hooks/useGlobalContext";
 function Profile() {
-  const { user, updateUser, showAlert, displayAlert, isLoading } =
+  const { user, updateUser, showAlert, displayAlert, isLoading, clearAlert } =
     useGlobalContext();
   const [localUser, setLocalUser] = useState({
     name: user?.name,
@@ -32,6 +32,12 @@ function Profile() {
     }
     updateUser({ name, email, lastName, location });
   }
+
+
+  useEffect(() => {
+    clearAlert()
+    console.log("render profile");
+  }, [])
 
   return (
     <Wrapper>
