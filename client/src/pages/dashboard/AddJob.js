@@ -19,19 +19,20 @@ function AddJob() {
     status,
     isLoading,
     editJob,
-    editJobId
+    editJobId,
+    cancelEditJob,
+    initialJobLocation,
   } = useGlobalContext();
-
+  console.log(position, company, jobLocation, status, jobType);
   const initState = {
-    company: position,
-    position: company,
+    company: company,
+    position: position,
     jobLocation: jobLocation,
     status: status,
     jobType: jobType,
   };
-
   const [jobInfo, setJobInfo] = useState(initState);
-  let navigate = useNavigate()
+  let navigate = useNavigate();
   //si se esta editando,
   // mi initState toma el valor de mi actual job
 
@@ -47,14 +48,19 @@ function AddJob() {
 
     if (isEditing) {
       await editJob({ ...jobInfo, editJobId });
-      // setJobInfo(initState);
-      // setTimeout(() => {
-      //   // navigate("/all-jobs");
-      // }, 1000);
+      setJobInfo({
+        company: "",
+        position: "",
+        jobLocation: initialJobLocation,
+        status: status,
+        jobType: jobType,
+      });
       return;
     }
     // create job
-    await createJob({ ...jobInfo });
+    else {
+      await createJob({ ...jobInfo });
+    }
     setJobInfo(initState);
   }
 
@@ -64,6 +70,18 @@ function AddJob() {
     });
   }
   
+  function handleCancelEdit() {
+    setJobInfo({
+      company: "",
+      position: "",
+      jobLocation: initialJobLocation,
+      status: status,
+      jobType: jobType,
+    });
+    // navigate("/all-jobs");
+    cancelEditJob()
+  }
+
   return (
     <Wrapper>
       <form className="form" onSubmit={(e) => handleSubmit(e)}>
@@ -124,7 +142,9 @@ function AddJob() {
             </button>
             <button
               className="btn btn-block clear-btn"
-              onClick={() => setJobInfo(initState)}
+              onClick={() => {
+                isEditing ? handleCancelEdit() : setJobInfo(initState);
+              }}
               type="reset"
             >
               {isEditing ? "cancel" : "reset"}

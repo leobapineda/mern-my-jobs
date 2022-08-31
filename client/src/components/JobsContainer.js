@@ -44,3 +44,6 @@ function JobsContainer() {
 }
 
 export default JobsContainer;
+
+// mi estado se esta ejecutando de nuevo al regresar
+  //hay un temporizador de 3 segundos en algun lado que hace que si vuelvo antes de tiemo, desaparezca mi edit

@@ -18,6 +18,7 @@ export const initState = {
   userLocation: location,
   showSidebar: false,
   jobLocation: location,
+  initialJobLocation: location,
   // JOB VALUES
   isEditing: false,
   editJobId: "",
@@ -145,6 +146,7 @@ function GlobalContextProvider({ children }) {
   }
 
   async function createJob(currentJobInfo) {
+    // console.log(currentJobInfo);
     dispatch({
       type: ACTIONS.JOB_CREATED_BEGIN,
     });
@@ -178,37 +180,35 @@ function GlobalContextProvider({ children }) {
       });
     } catch (error) {
       console.log(error);
-      logoutUser();
+      // logoutUser();
     }
-
-    clearAlert();
+    // ya no es necesario limpiar la alert, lo hacemos en el reducer con las acciones de GET_JOBS_BEGIN y GET_JOBS_SUCCESS
+    // clearAlert();
   }
 
   async function deleteJob(id) {
+      dispatch({
+          type: ACTIONS.DELETE_JOBS_BEGIN
+        });
     try {
-      const res = await authFetch.delete(`/jobs/${id}`);
+      await authFetch.delete(`/jobs/${id}`);
       getJobs();
-      console.log(res);
     } catch (error) {
       console.log(error);
+      // logoutUser();
     }
   }
 
   function setEditJob(id) {
-    const editJob = state.jobs.find((job) => {
-      return job._id === id;
-    });
-    // console.log(editJob);
     dispatch({
-      type: ACTIONS.EDITING_JOB,
-      payload: editJob,
+      type: ACTIONS.SET_EDIT_JOB,
+      payload: { id },
     });
   }
 
   async function editJob(jobInfo) {
     try {
-      const res = await authFetch.patch(`/jobs/${jobInfo.editJobId}`, jobInfo);
-      console.log(res);
+      await authFetch.patch(`/jobs/${jobInfo.editJobId}`, jobInfo);
       dispatch({
         type: ACTIONS.EDIT_JOB_SUCCESS,
       });
@@ -220,11 +220,16 @@ function GlobalContextProvider({ children }) {
         type: ACTIONS.EDIT_JOB_ERROR,
         payload: message,
       });
-    } 
+    }
     clearAlert();
     // ya se guardo todo, regresame a all jobs
   }
 
+  function cancelEditJob() {
+     dispatch({
+       type: ACTIONS.EDIT_JOB_CANCEL
+     });
+  }
   // --->>> DISPATCH ACTIONS
 
   // --->>> USEEFFECT
@@ -260,6 +265,7 @@ function GlobalContextProvider({ children }) {
         setEditJob,
         deleteJob,
         editJob,
+        cancelEditJob,
       }}
     >
       {children}

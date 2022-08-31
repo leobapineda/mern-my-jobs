@@ -1,7 +1,10 @@
 import React from "react";
 import moment from "moment";
 import { useGlobalContext } from "../hooks/useGlobalContext";
-import { useNavigate } from "react-router";
+import { Link } from "react-router-dom";
+import { FaLocationArrow, FaBriefcase, FaCalendarAlt } from "react-icons/fa";
+import Wrapper from "../assets/wrappers/Job";
+import JobInfo from "./JobInfo";
 
 function Job({
   _id,
@@ -12,28 +15,50 @@ function Job({
   jobType,
   createdAt,
 }) {
-
   const { setEditJob, deleteJob } = useGlobalContext();
-  let navigate = useNavigate();
 
-  // al dar click en editar se me habre una nueva pagina en add job para editar, 
-  //se debe modificar el estado global de isEditing y eso actualiza el Add job page
-  // todos los recuadros se llenan con la info que pasamos de mi elemento
   async function editJob(id) {
-      await setEditJob(id);
-      navigate("/add-job");
+    await setEditJob(id);
   }
   return (
-    <div>
-      <h5>company: {company} - </h5>
-      <span>position: {position} - </span>
-      <span>status: {status} - </span>
-      <span>jobLocation: {jobLocation} - </span>
-      <span>jobType: {jobType}</span>
-      <div>{moment(createdAt).format("MMMM  Do, YYYY")}</div>
-      <button onClick={() => deleteJob(_id)}>remove</button>
-      <button onClick={() => editJob(_id)}>edit</button>
-    </div>
+    <Wrapper>
+      <header>
+        <div className="main-icon">{company.charAt(0)}</div>
+        <div className="info">
+          <h5>{position}</h5>
+          <p>{company}</p>
+        </div>
+      </header>
+      <div className="content">
+        <div className="content-center">
+          <JobInfo icon={<FaLocationArrow />} text={jobLocation} />
+          <JobInfo
+            icon={<FaCalendarAlt />}
+            text={moment(createdAt).format("MMMM  Do, YYYY")}
+          />
+          <JobInfo icon={<FaBriefcase />} text={jobType} />
+          <div className={`status ${status}`}>{status}</div>
+        </div>
+        <footer>
+          <div className="actions">
+            <Link
+              to="/add-job"
+              className="btn edit-btn"
+              onClick={() => editJob(_id)}
+            >
+              Edit
+            </Link>
+            <button
+              onClick={() => deleteJob(_id)}
+              type="button"
+              className="btn delete-btn"
+            >
+              Delete
+            </button>
+          </div>
+        </footer>
+      </div>
+    </Wrapper>
   );
 }
 

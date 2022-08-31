@@ -2,6 +2,7 @@ import { ACTIONS } from "./actions";
 import { initState } from "./GlobalContext";
 
 export default function reducer(initStateReducer, action) {
+  // console.log("reducer");
   switch (action.type) {
     case ACTIONS.DISPLAY_ALERT:
       return {
@@ -18,7 +19,7 @@ export default function reducer(initStateReducer, action) {
         alertText: "",
         alertType: "",
         isLoading: false,
-        jobLocation: initStateReducer.location,
+        jobLocation: initState.jobLocation,
         isEditing: false,
         editJobId: "",
         position: "",
@@ -140,12 +141,16 @@ export default function reducer(initStateReducer, action) {
         ...initStateReducer,
         isLoading: true,
         // this is just a precaution
-        showAlert: false,
+        // showAlert: false,
+        // isEditing: false,
+        //al llegar aqui, todo lo que tiene que ver con las alert se cancela
       };
     case ACTIONS.GET_JOBS_SUCCESS:
       return {
         ...initStateReducer,
         isLoading: false,
+        // showAlert: false,
+        // isEditing: false,
         jobs: action.payload.jobs,
         totalJobs: action.payload.totalJobs,
         numOfPages: action.payload.numOfPages,
@@ -158,19 +163,25 @@ export default function reducer(initStateReducer, action) {
         alertText: action.payload.message,
         alertType: "danger",
       };
-    case ACTIONS.EDITING_JOB:
+    case ACTIONS.SET_EDIT_JOB:
+      const job = initStateReducer.jobs.find((job) => {
+        return job._id === action.payload.id;
+      });
+      const { _id, position, company, jobLocation, jobType, status } = job;
       return {
         ...initStateReducer,
+        isLoading: false,
         isEditing: true,
-        editJobId: action.payload._id,
-        position: action.payload.position,
-        company: action.payload.company,
-        jobType: action.payload.jobType,
-        status: action.payload.status,
-        jobLocation: action.payload.jobLocation,
+        editJobId: _id,
+        position,
+        company,
+        jobType,
+        status,
+        jobLocation,
       };
     //edit job success
     case ACTIONS.EDIT_JOB_SUCCESS:
+      console.log(initState);
       return {
         ...initState,
         showAlert: true,
@@ -186,6 +197,10 @@ export default function reducer(initStateReducer, action) {
         alertText: action.payload.message,
         alertType: "danger",
       };
+    case ACTIONS.EDIT_JOB_CANCEL:
+      return initState;
+    case ACTIONS.DELETE_JOBS_BEGIN:
+      return { ...initStateReducer, isLoading: true };
     default:
       throw new Error(`This action does not exist: ${action.type}`);
   }
