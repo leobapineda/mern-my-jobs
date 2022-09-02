@@ -26,29 +26,6 @@ export default function reducer(initStateReducer, action) {
         company: "",
         jobType: "full-time",
         status: "pending",
-
-        //   showAlert: false,
-        //   alertText: "",
-        //   alertType: "",
-        //   user: user ? JSON.parse(user) : null,
-        //   token: token,
-        //   userLocation: location,
-        //   showSidebar: false,
-        //   jobLocation: location,
-        //   // JOB VALUES
-        //   isEditing: false,
-        //   editJobId: "",
-        //   position: "",
-        //   company: "",
-        //   jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
-        //   jobType: "full-time",
-        //   statusOptions: ["pending", "interview", "declined"],
-        //   status: "pending",
-        //   // GET ALL JOBS
-        //   jobs: [],
-        //   totalJobs: 0,
-        //   numOfPages: 1,
-        //   page: 1,
       };
     case ACTIONS.SETUP_USER_BEGIN:
       return {
@@ -149,8 +126,6 @@ export default function reducer(initStateReducer, action) {
       return {
         ...initStateReducer,
         isLoading: false,
-        // showAlert: false,
-        // isEditing: false,
         jobs: action.payload.jobs,
         totalJobs: action.payload.totalJobs,
         numOfPages: action.payload.numOfPages,
@@ -181,7 +156,6 @@ export default function reducer(initStateReducer, action) {
       };
     //edit job success
     case ACTIONS.EDIT_JOB_SUCCESS:
-      console.log(initState);
       return {
         ...initState,
         showAlert: true,
@@ -201,34 +175,35 @@ export default function reducer(initStateReducer, action) {
       return initState;
     case ACTIONS.DELETE_JOBS_BEGIN:
       return { ...initStateReducer, isLoading: true };
+    // SHOW_STATS_BEGIN
+    case ACTIONS.SHOW_STATS_BEGIN:
+      return { ...initStateReducer, isLoading: true, showAlert: false };
+    // SHOW_STATS_SUCCESS
+    case ACTIONS.SHOW_STATS_SUCCESS:
+      return {
+        ...initStateReducer,
+        isLoading: false,
+        stats: action.payload.defaultStats,
+        monthlyApplications: action.payload.monthlyApplications,
+        // to not use clearAlert in the dispatch function we put this here instead
+        showAlert: false,
+        alertText: "",
+        alertType: "",
+      };
+    case ACTIONS.FILTER_JOBS:
+      return {
+        ...initStateReducer,
+        [action.payload.name]: action.payload.value,
+      };
+    case ACTIONS.CLEAR_FILTERS:
+      return {
+        ...initStateReducer,
+        search: "",
+        searchStatus: "all",
+        searchType: "all",
+        sort: "latest",
+      };
     default:
       throw new Error(`This action does not exist: ${action.type}`);
   }
 }
-
-
-// const initState2 = {
-//   isLoading: false,
-//   showAlert: false,
-//   alertText: "",
-//   alertType: "",
-//   user: user ? JSON.parse(user) : null,
-//   token: token,
-//   userLocation: location,
-//   showSidebar: false,
-//   jobLocation: location,
-//   // JOB VALUES
-//   isEditing: false,
-//   editJobId: "",
-//   position: "",
-//   company: "",
-//   jobTypeOptions: ["full-time", "part-time", "remote", "internship"],
-//   jobType: "full-time",
-//   statusOptions: ["pending", "interview", "declined"],
-//   status: "pending",
-//   // GET ALL JOBS
-//   jobs: [],
-//   totalJobs: 0,
-//   numOfPages: 1,
-//   page: 1,
-// };

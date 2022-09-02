@@ -34,10 +34,10 @@ function Profile() {
   }
 
 
-  useEffect(() => {
-    clearAlert()
-    console.log("render profile");
-  }, [])
+  // useEffect(() => {
+  //   clearAlert()
+  //   console.log("render profile");
+  // }, [])
 
   return (
     <Wrapper>

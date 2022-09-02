@@ -33,6 +33,12 @@ export const initState = {
   totalJobs: 0,
   numOfPages: 1,
   page: 1,
+  stats: {},
+  monthlyApplications: [],
+  search: "",
+  searchStatus: "all",
+  searchType: "all",
+  sort: "latest",
 };
 
 function GlobalContextProvider({ children }) {
@@ -167,12 +173,31 @@ function GlobalContextProvider({ children }) {
     clearAlert();
   }
 
-  async function getJobs() {
-    // console.log("getJobs");
-    // llamada a mi api, y dispatch actions
+  async function getJobs(name, value) {
+    const { search, searchStatus, searchType, sort } = state;
+    //we need to savev the values from global state to another object
+    //this is more reliable
+    const query = {
+      search: search,
+      searchStatus: searchStatus,
+      searchType: searchType,
+      sort: sort,
+      [name]: value,
+    };
+
+    const url = `/jobs?search=${query.search}&status=${query.searchStatus}&jobType=${query.searchType}&sort=${query.sort}`;
+
+    //save the filter values in the global context
+
+    dispatch({
+      type: ACTIONS.FILTER_JOBS,
+      payload: { name, value },
+    });
+    console.log("getJobs");
     dispatch({ type: ACTIONS.GET_JOBS_BEGIN });
+
     try {
-      const { data } = await authFetch("/jobs");
+      const { data } = await authFetch(url);
       const { totalJobs, numOfPages, jobs } = data;
       dispatch({
         type: ACTIONS.GET_JOBS_SUCCESS,
@@ -180,19 +205,20 @@ function GlobalContextProvider({ children }) {
       });
     } catch (error) {
       console.log(error);
-      // logoutUser();
+      logoutUser();
     }
     // ya no es necesario limpiar la alert, lo hacemos en el reducer con las acciones de GET_JOBS_BEGIN y GET_JOBS_SUCCESS
     // clearAlert();
+    //=======================> DESDE AQUI COMENTE TODO
   }
 
   async function deleteJob(id) {
-      dispatch({
-          type: ACTIONS.DELETE_JOBS_BEGIN
-        });
+    dispatch({
+      type: ACTIONS.DELETE_JOBS_BEGIN,
+    });
     try {
       await authFetch.delete(`/jobs/${id}`);
-      getJobs();
+      getJobs(); 
     } catch (error) {
       console.log(error);
       // logoutUser();
@@ -226,9 +252,33 @@ function GlobalContextProvider({ children }) {
   }
 
   function cancelEditJob() {
-     dispatch({
-       type: ACTIONS.EDIT_JOB_CANCEL
-     });
+    dispatch({
+      type: ACTIONS.EDIT_JOB_CANCEL,
+    });
+  }
+
+  async function showStats() {
+    dispatch({
+      type: ACTIONS.SHOW_STATS_BEGIN,
+    });
+    try {
+      const { data } = await authFetch.get(`/jobs/stats`);
+      dispatch({
+        type: ACTIONS.SHOW_STATS_SUCCESS,
+        payload: data,
+      });
+    } catch (error) {
+      console.log(error);
+      // logoutUser()
+    }
+    // clearAlert()
+  }
+
+  async function clearFilters() {
+    //lipiar todos mis estados a como eran antes, hacer una llamada de all jobs
+    dispatch({
+      type: ACTIONS.CLEAR_FILTERS,
+    });
   }
   // --->>> DISPATCH ACTIONS
 
@@ -266,6 +316,9 @@ function GlobalContextProvider({ children }) {
         deleteJob,
         editJob,
         cancelEditJob,
+        showStats,
+        clearFilters,
+        // filterJobs,
       }}
     >
       {children}

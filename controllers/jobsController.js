@@ -7,8 +7,8 @@ import {
   Forbidden,
 } from "../errors/index.js";
 import checkPermissions from "../utils/checkPermissions.js";
-
-
+import mongoose from "mongoose";
+import moment from "moment";
 
 const createJob = async (req, res) => {
   const { position, company } = req.body;
@@ -34,7 +34,45 @@ const createJob = async (req, res) => {
 };
 
 const getAllJobs = async (req, res) => {
-  const jobs = await jobModel.find({ createdBy: req.user.userID });
+  const { status, jobType, search, sort } = req.query;
+
+  const queryObject = {};
+  if (status && status !== "all") {
+    queryObject.status = status;
+  }
+
+  if (jobType && jobType !== "all") {
+    queryObject.jobType = jobType;
+  }
+
+  if (search) {
+    queryObject.position = { $regex: search, $options: "i" };
+  }
+
+  let sortValue;
+
+  if (sort) {
+    switch (sort) {
+      case "latest":
+        sortValue = { createdAt: -1 };
+        break;
+      case "oldest":
+        sortValue = { createdAt: 1 };
+        break;
+      case "a-z":
+        sortValue = { position: 1 };
+        break;
+      case "z-a":
+        sortValue = { position: -1 };
+        break;
+    }
+  }
+  console.log("i am queryObject");
+  console.log(queryObject);
+  let jobs = await jobModel.find(queryObject).sort(sortValue);
+  // const jobs = await result.sort(sortValue);
+
+  //se hacen dos llamadas, una con s y luego se regresa
 
   res
     .status(StatusCodes.OK)
@@ -98,23 +136,77 @@ const deleteJob = async (req, res) => {
   const { userID } = req.user;
   const jobId = req.params.id;
 
+  const findJob = await jobModel.findOne({ _id: jobId });
 
-   const findJob = await jobModel.findOne({ _id: jobId });
+  if (!findJob) {
+    throw new NotFound(`There is no job with id: ${jobId}`);
+  }
 
-   if (!findJob) {
-     throw new NotFound(`There is no job with id: ${jobId}`);
-   }
+  checkPermissions(req.user, findJob.createdBy);
 
-
-   checkPermissions(req.user, findJob.createdBy);
-
-   await findJob.remove()
+  await findJob.remove();
 
   res.status(StatusCodes.OK).json({ message: "job deleted" });
 };
 
 const showStats = async (req, res) => {
-  res.status(200).send("showStats");
+  let stats = await jobModel.aggregate([
+    {
+      //req.user.userID is a string, so we need to convert it to a mongoose object id with mongoose.Types.ObjectId
+      $match: { createdBy: mongoose.Types.ObjectId(req.user.userID) },
+    },
+    {
+      $group: { _id: "$status", count: { $sum: 1 } },
+    },
+  ]);
+
+  stats = stats.reduce((accu, stat) => {
+    accu[stat._id] = stat.count;
+    return accu;
+  }, {});
+
+  const defaultStats = {
+    pending: stats.pending || 0,
+    interview: stats.interview || 0,
+    declined: stats.declined || 0,
+  };
+
+  let monthlyApplications = await jobModel.aggregate([
+    {
+      //1.- we get the values that math the user id
+      //convert req.user.userID to mongodb object id
+      $match: { createdBy: mongoose.Types.ObjectId(req.user.userID) },
+    },
+    {
+      //2.- group the user by year and month
+      $group: {
+        _id: { year: { $year: "$createdAt" }, month: { $month: "$createdAt" } },
+        count: { $sum: 1 },
+      },
+    },
+    // here we sort them by year and month, getting the latest first
+    { $sort: { "_id.year": -1, "_id.month": -1 } },
+    // here we say that we only want the first 6 results
+    { $limit: 6 },
+  ]);
+
+  //here we need to give it another format that will be easier to work with in the frontend
+  monthlyApplications = monthlyApplications
+    .map((item) => {
+      const {
+        _id: { year, month },
+        count,
+      } = item;
+      //accpets 0-11
+      const date = moment()
+        .month(month - 1)
+        .year(year)
+        .format("MMM Y");
+      return { date, count };
+    })
+    .reverse();
+
+  res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
 };
 
 const deleteAllJobs = async (req, res) => {
@@ -131,3 +223,5 @@ export {
   showStats,
   deleteAllJobs,
 };
+
+//buscamos por filtro, buscar por status, type

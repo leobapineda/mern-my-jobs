@@ -23,7 +23,7 @@ function AddJob() {
     cancelEditJob,
     initialJobLocation,
   } = useGlobalContext();
-  console.log(position, company, jobLocation, status, jobType);
+
   const initState = {
     company: company,
     position: position,
@@ -32,12 +32,11 @@ function AddJob() {
     jobType: jobType,
   };
   const [jobInfo, setJobInfo] = useState(initState);
-  let navigate = useNavigate();
   //si se esta editando,
   // mi initState toma el valor de mi actual job
 
   async function handleSubmit(e) {
-    console.log("handleSubmit");
+    
     e.preventDefault();
     if (isLoading) return;
     const { company, position, jobLocation } = jobInfo;
@@ -138,7 +137,7 @@ function AddJob() {
               className="btn btn-block submit-btn"
               type="submit"
             >
-              {isEditing ? "save changes" : "submit"}
+              {isEditing ? "save" : "submit"}
             </button>
             <button
               className="btn btn-block clear-btn"

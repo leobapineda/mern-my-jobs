@@ -8,21 +8,34 @@ import Wrapper from "../assets/wrappers/JobsContainer";
 import { useNavigate } from "react-router";
 
 function JobsContainer() {
-  const { getJobs, jobs, isLoading, totalJobs, numOfPages, page } =
-    useGlobalContext();
+  const {
+    getJobs,
+    jobs,
+    isLoading,
+    totalJobs,
+    numOfPages,
+    page,
+    search,
+    searchStatus,
+    searchType,
+    sort,
+  } = useGlobalContext();
   let navigate = useNavigate();
 
   // USEEFFECT
   useEffect(() => {
     getJobs();
+    console.log("useEffect getJobs");
   }, []);
-
+ 
   // USEEFFECT
   // console.log("jobsContainer");
 
   if (isLoading) {
     return <Loading center />;
   }
+  
+  console.log("jobsContainer");
 
   return (
     <Wrapper>
