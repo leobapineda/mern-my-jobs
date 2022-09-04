@@ -67,16 +67,22 @@ const getAllJobs = async (req, res) => {
         break;
     }
   }
-  console.log("i am queryObject");
-  console.log(queryObject);
-  let jobs = await jobModel.find(queryObject).sort(sortValue);
-  // const jobs = await result.sort(sortValue);
 
-  //se hacen dos llamadas, una con s y luego se regresa
+  //we use Number() because the query values is a string, so we need to convert it to Number
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const skip = (page - 1) * 10;
 
-  res
-    .status(StatusCodes.OK)
-    .json({ totalJobs: jobs.length, numOfPages: 1, jobs });
+  const jobs = await jobModel
+    .find(queryObject)
+    .sort(sortValue)
+    .skip(skip)
+    .limit(limit);
+  // countDocuments gives us the number of documents in the data base that math the filter, in this case the filter is: queryObject
+  const totalJobs = await jobModel.countDocuments(queryObject);
+  const numOfPages = Math.ceil(totalJobs / limit);
+
+  res.status(StatusCodes.OK).json({ totalJobs, numOfPages, jobs });
 };
 
 const updateJob = async (req, res) => {

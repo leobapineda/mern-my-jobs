@@ -206,7 +206,7 @@ function GlobalContextProvider({ children }) {
     } catch (error) {
       console.log(error);
       logoutUser();
-    }
+    } 
     // ya no es necesario limpiar la alert, lo hacemos en el reducer con las acciones de GET_JOBS_BEGIN y GET_JOBS_SUCCESS
     // clearAlert();
     //=======================> DESDE AQUI COMENTE TODO

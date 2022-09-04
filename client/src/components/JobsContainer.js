@@ -2,10 +2,9 @@ import React, { useEffect } from "react";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import Loading from "./Loading";
 import Job from "./Job";
-import JobInfo from "./JobInfo";
 import Wrapper from "../assets/wrappers/JobsContainer";
-
 import { useNavigate } from "react-router";
+import PageBtnContainer from "./PageBtnContainer";
 
 function JobsContainer() {
   const {
@@ -25,17 +24,14 @@ function JobsContainer() {
   // USEEFFECT
   useEffect(() => {
     getJobs();
-    console.log("useEffect getJobs");
   }, []);
- 
+
   // USEEFFECT
   // console.log("jobsContainer");
 
   if (isLoading) {
     return <Loading center />;
   }
-  
-  console.log("jobsContainer");
 
   return (
     <Wrapper>
@@ -52,11 +48,9 @@ function JobsContainer() {
           Add job
         </button>
       )}
+      {numOfPages > 1 && <PageBtnContainer />}
     </Wrapper>
   );
 }
 
 export default JobsContainer;
-
-// mi estado se esta ejecutando de nuevo al regresar
-  //hay un temporizador de 3 segundos en algun lado que hace que si vuelvo antes de tiemo, desaparezca mi edit
