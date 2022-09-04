@@ -123,12 +123,18 @@ export default function reducer(initStateReducer, action) {
         //al llegar aqui, todo lo que tiene que ver con las alert se cancela
       };
     case ACTIONS.GET_JOBS_SUCCESS:
+        action.payload.page = initStateReducer.page;
+        if (action.payload.name && action.payload.value) {
+          action.payload.page = 1;
+        }
+
       return {
         ...initStateReducer,
         isLoading: false,
         jobs: action.payload.jobs,
         totalJobs: action.payload.totalJobs,
         numOfPages: action.payload.numOfPages,
+        page: action.payload.page,
       };
     case ACTIONS.GET_JOBS_ERROR:
       return {
@@ -202,6 +208,24 @@ export default function reducer(initStateReducer, action) {
         searchStatus: "all",
         searchType: "all",
         sort: "latest",
+      };
+    //NEXT PAGE
+    case ACTIONS.NEXT_PAGE:
+      return {
+        ...initStateReducer,
+        page: initStateReducer.page + 1,
+      };
+    //PREV
+    case ACTIONS.PREV_PAGE:
+      return {
+        ...initStateReducer,
+        page: initStateReducer.page - 1,
+      };
+    //CHANGE PAGE
+    case ACTIONS.CHANGE_PAGE:
+      return {
+        ...initStateReducer,
+        page: action.payload,
       };
     default:
       throw new Error(`This action does not exist: ${action.type}`);

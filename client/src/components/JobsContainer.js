@@ -24,7 +24,7 @@ function JobsContainer() {
   // USEEFFECT
   useEffect(() => {
     getJobs();
-  }, []);
+  }, [page, search, searchStatus, searchType, sort]);
 
   // USEEFFECT
   // console.log("jobsContainer");

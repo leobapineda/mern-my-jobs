@@ -174,7 +174,7 @@ function GlobalContextProvider({ children }) {
   }
 
   async function getJobs(name, value) {
-    const { search, searchStatus, searchType, sort } = state;
+    const { search, searchStatus, searchType, sort, page } = state;
     //we need to savev the values from global state to another object
     //this is more reliable
     const query = {
@@ -185,15 +185,13 @@ function GlobalContextProvider({ children }) {
       [name]: value,
     };
 
-    const url = `/jobs?search=${query.search}&status=${query.searchStatus}&jobType=${query.searchType}&sort=${query.sort}`;
-
-    //save the filter values in the global context
-
+    const url = `/jobs?search=${query.search}&status=${query.searchStatus}&jobType=${query.searchType}&sort=${query.sort}&page=${page}`;
+    //ponlo si page es mayor que dos
     dispatch({
       type: ACTIONS.FILTER_JOBS,
       payload: { name, value },
     });
-    console.log("getJobs");
+
     dispatch({ type: ACTIONS.GET_JOBS_BEGIN });
 
     try {
@@ -201,15 +199,40 @@ function GlobalContextProvider({ children }) {
       const { totalJobs, numOfPages, jobs } = data;
       dispatch({
         type: ACTIONS.GET_JOBS_SUCCESS,
-        payload: { totalJobs, numOfPages, jobs },
+        payload: { totalJobs, numOfPages, jobs, name, value },
       });
     } catch (error) {
       console.log(error);
-      logoutUser();
-    } 
+      // logoutUser();
+    }
     // ya no es necesario limpiar la alert, lo hacemos en el reducer con las acciones de GET_JOBS_BEGIN y GET_JOBS_SUCCESS
     // clearAlert();
     //=======================> DESDE AQUI COMENTE TODO
+  }
+
+  function nextPageGlobal() {
+    if (state.page === state.numOfPages) return;
+    console.log("nextPageGlobal");
+    dispatch({
+      type: ACTIONS.NEXT_PAGE,
+    });
+    //in the JobsContainer we call the getJobs() inside the useEffect when the page changes
+  }
+
+  function prevPageGlobal() {
+    if (state.page === 1) return;
+    console.log("prevPageGlobal");
+    dispatch({
+      type: ACTIONS.PREV_PAGE,
+    });
+    //in the JobsContainer we call the getJobs() inside the useEffect when the page changes
+  }
+
+  function changePage(number) {
+    dispatch({
+      type: ACTIONS.CHANGE_PAGE,
+      payload: number,
+    });
   }
 
   async function deleteJob(id) {
@@ -218,7 +241,7 @@ function GlobalContextProvider({ children }) {
     });
     try {
       await authFetch.delete(`/jobs/${id}`);
-      getJobs(); 
+      getJobs();
     } catch (error) {
       console.log(error);
       // logoutUser();
@@ -318,7 +341,9 @@ function GlobalContextProvider({ children }) {
         cancelEditJob,
         showStats,
         clearFilters,
-        // filterJobs,
+        nextPageGlobal,
+        prevPageGlobal,
+        changePage,
       }}
     >
       {children}

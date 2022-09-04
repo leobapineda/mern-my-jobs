@@ -3,14 +3,16 @@ import { useGlobalContext } from "../hooks/useGlobalContext";
 import { HiChevronDoubleLeft, HiChevronDoubleRight } from "react-icons/hi";
 import Wrapper from "../assets/wrappers/PageBtnContainer";
 function PageBtnContainer() {
-  const { numOfPages, page } = useGlobalContext();
+  const { numOfPages, page, nextPageGlobal, prevPageGlobal, changePage } =
+    useGlobalContext();
 
   function nextPage() {
-    console.log("next page");
+    // llamar a mi global context, aumentar uno a la pagina y modificar codigo en reducer
+    nextPageGlobal();
   }
 
   function prevPage() {
-    console.log("prev page");
+    prevPageGlobal();
   }
 
   //crear un array
@@ -21,7 +23,11 @@ function PageBtnContainer() {
 
   return (
     <Wrapper>
-      <button className="prev-btn" onClick={prevPage}>
+      <button
+        className="prev-btn"
+        disabled={page === numOfPages}
+        onClick={prevPage}
+      >
         <HiChevronDoubleLeft />
         prev
       </button>
@@ -32,14 +38,18 @@ function PageBtnContainer() {
               key={pageNumber}
               type="button"
               className={pageNumber === page ? "pageBtn active" : "pageBtn"}
-              onClick={() => console.log("change page")}
+              onClick={() => changePage(pageNumber)}
             >
               {pageNumber}
             </button>
           );
         })}
       </div>
-      <button className="next-btn" onClick={nextPage}>
+      <button
+        className="next-btn"
+        onClick={nextPage}
+        disabled={page === numOfPages}
+      >
         <HiChevronDoubleRight />
         next
       </button>
