@@ -1,7 +1,7 @@
 import React from "react";
 import { useGlobalContext } from "../hooks/useGlobalContext";
 import Wrapper from "../assets/wrappers/SearchContainer";
-import {FormRow, FormSelect } from "../components";
+import { FormRow, FormSelect } from "../components";
 
 function SearchContainer() {
   const {
@@ -13,17 +13,17 @@ function SearchContainer() {
     jobTypeOptions,
     getJobs,
     clearFilters,
-    isLoading
+    isLoading,
   } = useGlobalContext();
 
   function handleSubmit(e) {
-    e.preventDefault()
+    e.preventDefault();
   }
 
   function handleChange(e) {
     //to prevent the user for searching while the previous search is still happening
-    if(isLoading) return
-    let name = e.target.name
+    if (isLoading) return;
+    let name = e.target.name;
     let value = e.target.value;
     getJobs(name, value);
   }
@@ -65,7 +65,14 @@ function SearchContainer() {
             options={["latest", "oldest", "a-z", "z-a"]}
             handleChange={handleChange}
           />
-          <button disabled={isLoading} type="button" onClick={clearFilters} className="btn btn-block btn-danger" >Clear Filters</button>
+          <button
+            disabled={isLoading}
+            type="button"
+            onClick={clearFilters}
+            className="btn btn-block btn-danger"
+          >
+            Clear Filters
+          </button>
         </div>
       </form>
     </Wrapper>

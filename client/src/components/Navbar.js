@@ -9,9 +9,7 @@ function Navbar() {
   const [showLogout, setShowLogout] = useState(false);
 
   function handleLogout() {
-    setTimeout(() => {
-      logoutUser();
-    }, 0);
+     logoutUser();
   }
   return (
     <Wrapper>
@@ -20,7 +18,7 @@ function Navbar() {
           <FaAlignLeft />
         </button>
         <div>
-          <Link to="/landing">
+          <Link to="/all-jobs">
             <Logo />
           </Link>
 

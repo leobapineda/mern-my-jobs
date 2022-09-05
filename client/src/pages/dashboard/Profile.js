@@ -34,11 +34,6 @@ function Profile() {
   }
 
 
-  // useEffect(() => {
-  //   clearAlert()
-  //   console.log("render profile");
-  // }, [])
-
   return (
     <Wrapper>
       <form className="form" onSubmit={(e) => handleSubmit(e)}>

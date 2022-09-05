@@ -2,9 +2,7 @@ import jobModel from "../models/jobModel.js";
 import { StatusCodes } from "http-status-codes";
 import {
   BadRequest,
-  Unauthenticated,
   NotFound,
-  Forbidden,
 } from "../errors/index.js";
 import checkPermissions from "../utils/checkPermissions.js";
 import mongoose from "mongoose";
@@ -35,6 +33,9 @@ const createJob = async (req, res) => {
 
 const getAllJobs = async (req, res) => {
   const { status, jobType, search, sort } = req.query;
+  const { userID } = req.user;
+
+  // checkPermissions(req.user, findJob.createdBy);
 
   const queryObject = {};
   if (status && status !== "all") {
@@ -74,12 +75,15 @@ const getAllJobs = async (req, res) => {
   const skip = (page - 1) * 10;
 
   const jobs = await jobModel
-    .find(queryObject)
+    .find({...queryObject, createdBy: userID })
     .sort(sortValue)
     .skip(skip)
     .limit(limit);
   // countDocuments gives us the number of documents in the data base that math the filter, in this case the filter is: queryObject
-  const totalJobs = await jobModel.countDocuments(queryObject);
+  const totalJobs = await jobModel.countDocuments({
+    ...queryObject,
+    createdBy: userID,
+  });
   const numOfPages = Math.ceil(totalJobs / limit);
 
   res.status(StatusCodes.OK).json({ totalJobs, numOfPages, jobs });
@@ -139,7 +143,6 @@ const updateJob = async (req, res) => {
 };
 
 const deleteJob = async (req, res) => {
-  const { userID } = req.user;
   const jobId = req.params.id;
 
   const findJob = await jobModel.findOne({ _id: jobId });

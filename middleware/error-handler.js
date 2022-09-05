@@ -28,9 +28,7 @@ const ErrorHanlderMiddleware = (err, req, res, next) => {
      CustomObject.message = "invalid id :" + err.value;
   } 
   
-  console.log(err);
   res.status(CustomObject.statusCode).json({ message: CustomObject.message });
-  // res.status(CustomObject.statusCode).json({ err });
 };
 
 export default ErrorHanlderMiddleware;

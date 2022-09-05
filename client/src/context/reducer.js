@@ -2,7 +2,6 @@ import { ACTIONS } from "./actions";
 import { initState } from "./GlobalContext";
 
 export default function reducer(initStateReducer, action) {
-  // console.log("reducer");
   switch (action.type) {
     case ACTIONS.DISPLAY_ALERT:
       return {
@@ -208,18 +207,6 @@ export default function reducer(initStateReducer, action) {
         searchStatus: "all",
         searchType: "all",
         sort: "latest",
-      };
-    //NEXT PAGE
-    case ACTIONS.NEXT_PAGE:
-      return {
-        ...initStateReducer,
-        page: initStateReducer.page + 1,
-      };
-    //PREV
-    case ACTIONS.PREV_PAGE:
-      return {
-        ...initStateReducer,
-        page: initStateReducer.page - 1,
       };
     //CHANGE PAGE
     case ACTIONS.CHANGE_PAGE:

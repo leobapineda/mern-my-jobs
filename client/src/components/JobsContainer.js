@@ -27,7 +27,6 @@ function JobsContainer() {
   }, [page, search, searchStatus, searchType, sort]);
 
   // USEEFFECT
-  // console.log("jobsContainer");
 
   if (isLoading) {
     return <Loading center />;

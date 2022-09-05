@@ -65,12 +65,11 @@ function Register() {
     if (user && token) {
       setTimeout(() => {
         navigate("/");
-      }, 3000);
+      }, 500);
       return;
     } else return;
   }, [user, navigate, token]);
   // --->>> USE-EFFECT
-  // console.log("render register");
   return (
     <Wrapper className="full-page">
       <form onSubmit={(e) => onSubmit(e)} className="form">
