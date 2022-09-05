@@ -74,15 +74,5 @@ const updateUser = async (req, res) => {
   });
 };
 
-// HELPER FUNCTIONS
-const deleteAllUsers = async (req, res) => {
-  const deleteAll = await UserModel.deleteMany()
-  res.status(200).json({ deleted: deleteAll.deletedCount });
-};
 
-const showUsers = async (req, res) => {
-  const Users = await UserModel.find().select("+password");
-  res.status(200).json({ No: Users.length, Users });
-};
-
-export { login, register, updateUser, deleteAllUsers, showUsers };
+export { login, register, updateUser};

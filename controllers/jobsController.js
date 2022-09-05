@@ -218,10 +218,6 @@ const showStats = async (req, res) => {
   res.status(StatusCodes.OK).json({ defaultStats, monthlyApplications });
 };
 
-const deleteAllJobs = async (req, res) => {
-  const deleteAll = await jobModel.deleteMany();
-  res.status(200).json({ deleteAll });
-};
 
 // al remover, volver a hacer llamada api
 export {
@@ -230,7 +226,6 @@ export {
   getAllJobs,
   updateJob,
   showStats,
-  deleteAllJobs,
 };
 
 //buscamos por filtro, buscar por status, type
